@@ -1,0 +1,56 @@
+{
+  "identifier": "run.vineyard.typepacks.financial",
+  "version": "2.0.0",
+  "types": [
+    {
+      "category": "financial",
+      "name": "crypto_address",
+      "display_name": "Crypto Address (legacy)",
+      "description": "Legacy type: a cryptocurrency address identified by its string alone, whatever the chain. New nodes are the Cryptocurrency pack's crypto_address, identified by network and address.",
+      "label_property": "address",
+      "icon": "wallet",
+      "color": "#f59e0b",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The public wallet address.",
+          "optional": false
+        },
+        "currency": {
+          "type": "enum",
+          "description": "Asset / chain.",
+          "optional": true,
+          "enum": [
+            "btc",
+            "eth",
+            "xmr",
+            "usdt",
+            "trx",
+            "ltc",
+            "bnb",
+            "sol",
+            "other"
+          ]
+        },
+        "balance": {
+          "type": "number",
+          "description": "Observed balance, in the native unit.",
+          "optional": true,
+          "validator": {
+            "min": 0
+          }
+        },
+        "owner_label": {
+          "type": "string",
+          "description": "Attribution tag (e.g. exchange, mixer, known actor).",
+          "optional": true
+        },
+        "first_seen": {
+          "type": "datetime",
+          "description": "First observed activity.",
+          "optional": true
+        }
+      }
+    }
+  ]
+}

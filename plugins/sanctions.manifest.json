@@ -1,0 +1,201 @@
+{
+  "identifier": "run.vineyard.pluginpacks.sanctions",
+  "content_type": "vineyard:pluginpack",
+  "name": "Sanctions Screening",
+  "version": "1.0.0",
+  "summary": "Screens crypto addresses, people and organizations against OFAC's SDN list: exact address matches on each address's own network, and scored possible matches for names. The list is downloaded whole and matched on this device.",
+  "description": "For the sanctions question in a crypto or financial case: is this address, person or company on OFAC's SDN list? Addresses match exactly, on their own network, and are linked to the party the list names. Names match by similarity, as scored candidates to confirm or dismiss.\n\n**Needs:** nothing. No account and no key.\n\n**Who sees it:** GitHub, which serves the list. A run downloads the whole list and matches on this device, so nothing you screen is sent anywhere. OFAC is not contacted.\n\n**Read results with care:**\n\n- The same string on another network is another account: the run names it and does not count it as a hit. A value OFAC lists for USDT or USDC without a chain matches on every EVM network.\n- `sanctioned: false` means not on the SDN list as of `sanctions_as_of`. It says nothing about other lists (UN, EU, UK, Korea) or about who controls the address. An address already marked sanctioned keeps that mark.\n- A possible match is a similar name, not the same party: compare date of birth and nationality before treating it as yours.\n- The mirror checks OFAC every six hours; a run warns when it has not for three days. Confirm a hit on OFAC's Sanctions List Search (https://sanctionssearch.ofac.treas.gov/) before acting on it.\n\n**Data and licences:** OFAC's SDN list, a U.S. Government work, as rebuilt and checked by sanctions-mirror (https://github.com/Vineyard-Intelligence/sanctions-mirror).\n\n**Source:** https://github.com/Vineyard-Intelligence/pluginpack-sanctions (Apache-2.0)",
+  "author": {
+    "name": "VINEYARD",
+    "url": "https://github.com/Vineyard-Intelligence"
+  },
+  "license": "Apache-2.0",
+  "icon": "shield-ban",
+  "platforms": {
+    "primary": "web",
+    "web": {
+      "runtime": "sandbox-js",
+      "entry": "dist/pack.mjs"
+    },
+    "desktop": {
+      "runtime": "sandbox-js",
+      "entry": "dist/pack.mjs"
+    }
+  },
+  "plugins": [
+    {
+      "identifier": "run.vineyard.plugins.sanctions_address_screening",
+      "content_type": "vineyard:plugin",
+      "name": "OFAC Address Screening",
+      "version": "1.0.0",
+      "description": "Checks each selected Crypto Address against the digital currency addresses on OFAC's SDN list, on the address's own network, and writes sanctioned (true or false), sanctions_list, sanctions_programs and sanctions_as_of (the list's publish date); an address already marked sanctioned by another source is left as it is. A listed address is linked from the listed person or organization by \"listed address\" with the SDN uid and programmes. An address on network evm or unknown, or a legacy Financial address, gets one node per network the list names it on, linked by \"same address on\" or \"same as\"; a legacy address whose currency names one chain (btc, ltc, xmr, trx, sol) is screened on that chain only. The list is downloaded whole and matched on this device; no address is sent.",
+      "icon": "wallet",
+      "platforms": {
+        "primary": "web",
+        "web": {
+          "runtime": "sandbox-js",
+          "entry": "dist/pack.mjs"
+        },
+        "desktop": {
+          "runtime": "sandbox-js",
+          "entry": "dist/pack.mjs"
+        }
+      },
+      "io": {
+        "consumes": [
+          {
+            "typepack": "run.vineyard.typepacks.cryptocurrency",
+            "category": "cryptocurrency",
+            "name": "crypto_address"
+          },
+          {
+            "typepack": "run.vineyard.typepacks.financial",
+            "category": "financial",
+            "name": "crypto_address"
+          }
+        ],
+        "produces": [
+          {
+            "typepack": "run.vineyard.typepacks.cryptocurrency",
+            "category": "cryptocurrency",
+            "name": "crypto_address"
+          },
+          {
+            "typepack": "run.vineyard.typepacks.identity",
+            "category": "identity",
+            "name": "person"
+          },
+          {
+            "typepack": "run.vineyard.typepacks.identity",
+            "category": "identity",
+            "name": "organization"
+          }
+        ]
+      },
+      "scopes": {
+        "graph": [
+          "node:read",
+          "node:create",
+          "node:update",
+          "edge:read",
+          "edge:create"
+        ],
+        "network": [
+          {
+            "endpoint": "https://raw.githubusercontent.com/Vineyard-Intelligence/sanctions-mirror/main",
+            "methods": [
+              "GET"
+            ],
+            "purpose": "Download OFAC's SDN list from the sanctions mirror: its index and the whole shard a screening needs. Nothing screened is sent."
+          }
+        ]
+      },
+      "lifecycle": {
+        "persistence": "opt-in",
+        "controls": [
+          "progress",
+          "cancel"
+        ],
+        "progress": "determinate"
+      }
+    },
+    {
+      "identifier": "run.vineyard.plugins.sanctions_name_screening",
+      "content_type": "vineyard:plugin",
+      "name": "OFAC Name Screening",
+      "version": "1.0.0",
+      "description": "Compares each selected Person's name and aliases with the individuals on OFAC's SDN list, and each Organization's with the entities, and links every entry whose name scores at least Min score (0.85 unless set) as a \"possible sanctions match\" with the score, the names that met and the programmes. The match is a candidate to confirm against date of birth and nationality, not a finding: nothing marks the subject as sanctioned. A listed party this pack created is re-checked by its SDN uid instead. The list is downloaded whole and matched on this device; no name is sent.",
+      "icon": "user-search",
+      "platforms": {
+        "primary": "web",
+        "web": {
+          "runtime": "sandbox-js",
+          "entry": "dist/pack.mjs"
+        },
+        "desktop": {
+          "runtime": "sandbox-js",
+          "entry": "dist/pack.mjs"
+        }
+      },
+      "io": {
+        "consumes": [
+          {
+            "typepack": "run.vineyard.typepacks.identity",
+            "category": "identity",
+            "name": "person"
+          },
+          {
+            "typepack": "run.vineyard.typepacks.identity",
+            "category": "identity",
+            "name": "organization"
+          }
+        ],
+        "produces": [
+          {
+            "typepack": "run.vineyard.typepacks.identity",
+            "category": "identity",
+            "name": "person"
+          },
+          {
+            "typepack": "run.vineyard.typepacks.identity",
+            "category": "identity",
+            "name": "organization"
+          }
+        ]
+      },
+      "params": {
+        "type": "object",
+        "properties": {
+          "min_score": {
+            "type": "number",
+            "title": "Min score",
+            "description": "Lowest name score linked as a possible match, 0.75–1 (default 0.85). 1 is the same words in any order.",
+            "minimum": 0.75,
+            "maximum": 1,
+            "default": 0.85
+          },
+          "max_candidates": {
+            "type": "integer",
+            "title": "Max candidates",
+            "description": "Possible matches linked per node, best first, 1–10 (default 3).",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 3
+          },
+          "include_weak_aliases": {
+            "type": "boolean",
+            "title": "Include weak aliases",
+            "description": "Also match aliases OFAC marks weak: too broad to identify anyone by themselves (e.g. \"HIDDEN COBRA\" for Lazarus Group).",
+            "default": false
+          }
+        }
+      },
+      "scopes": {
+        "graph": [
+          "node:read",
+          "node:create",
+          "node:update",
+          "edge:read",
+          "edge:create"
+        ],
+        "network": [
+          {
+            "endpoint": "https://raw.githubusercontent.com/Vineyard-Intelligence/sanctions-mirror/main",
+            "methods": [
+              "GET"
+            ],
+            "purpose": "Download OFAC's SDN list from the sanctions mirror: its index and the whole shard a screening needs. Nothing screened is sent."
+          }
+        ]
+      },
+      "lifecycle": {
+        "persistence": "opt-in",
+        "controls": [
+          "progress",
+          "cancel"
+        ],
+        "progress": "determinate"
+      }
+    }
+  ]
+}

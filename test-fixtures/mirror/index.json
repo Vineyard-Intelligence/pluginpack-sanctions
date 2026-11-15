@@ -1,0 +1,70 @@
+{
+  "format": 1,
+  "list": "OFAC SDN",
+  "source": {
+    "url": "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML",
+    "publish_date": "2026-11-13",
+    "record_count": 26,
+    "sha256": "ba02df98301ea279a81ef24931d37f601951bbea07308c777d694fdefa7d3515",
+    "last_modified": "2026-11-13T16:32:59Z",
+    "digest_verified": true
+  },
+  "generator": "0c4ffb52dd6ecef96032d7f6de273177b83f37b62672e0b61f52663b827d4c31",
+  "checked_at": "2026-11-14T23:47:00Z",
+  "counts": {
+    "entries": 26,
+    "names": {
+      "Individual": 13,
+      "Entity": 11,
+      "Vessel": 1,
+      "Aircraft": 1
+    },
+    "addresses": 208,
+    "listings": 216,
+    "parties_with_addresses": 16,
+    "addresses_by_network": {
+      "arbitrum": 1,
+      "bitcoin": 87,
+      "bitcoin_cash": 1,
+      "bitcoin_gold": 1,
+      "bnb_beacon": 1,
+      "bsc": 1,
+      "dash": 1,
+      "ethereum": 34,
+      "ethereum_classic": 1,
+      "evm": 4,
+      "litecoin": 4,
+      "monero": 1,
+      "tron": 69,
+      "verge": 1,
+      "zcash": 1
+    }
+  },
+  "unmapped_codes": [],
+  "notes": [
+    "uid 29585 XMR 5be5543ff73456ab9f2d207887e2af87322c651ea1a873c5b25b7ffae456c320: the value does not read as a monero address; kept as listed",
+    "uid 45404 XBT TUCsTq7TofTCJRRoHk6RvhMoS2mJLm5Yzq: listed as XBT, but the value is not a bitcoin address"
+  ],
+  "files": {
+    "addresses.json": {
+      "sha256": "2bd4c035d3f8de2ebbb3a4595183e3431cbd2c5b9ac1d85a01865215ee749ad4",
+      "bytes": 30561
+    },
+    "names/aircraft.json": {
+      "sha256": "7c27454864c81bb52817d44177d29a17a3b627aefddd6756412e36a6f7554c77",
+      "bytes": 236
+    },
+    "names/entity.json": {
+      "sha256": "6b1d3376d399583b3300a2a7bf10d8bfaa6b1126c380d11862ae3349dd4b11b6",
+      "bytes": 1458
+    },
+    "names/individual.json": {
+      "sha256": "c52f8350e6a2314b99a9a4f305312b365fef03f5d0f1ad559c7e19350c021cf7",
+      "bytes": 2085
+    },
+    "names/vessel.json": {
+      "sha256": "2ea7f57b12a61d389178aea270d45f9ae36acbf9a036fdd36edc42538cc04df2",
+      "bytes": 235
+    }
+  }
+}

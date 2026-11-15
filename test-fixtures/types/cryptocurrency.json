@@ -1,0 +1,188 @@
+{
+  "identifier": "run.vineyard.typepacks.cryptocurrency",
+  "version": "1.0.0",
+  "types": [
+    {
+      "category": "cryptocurrency",
+      "name": "crypto_address",
+      "display_name": "Crypto Address",
+      "description": "A public address on one network. The same string on another network is another node, and `evm` or `unknown` holds an address whose network is not established yet.",
+      "label_property": "address",
+      "identity_properties": [
+        "network",
+        "address",
+        "memo"
+      ],
+      "label_template": "{address} \u00b7 {network}",
+      "icon": "wallet",
+      "color": "#f7931a",
+      "properties": {
+        "network": {
+          "type": "enum",
+          "description": "The network the address is on. `evm`: a 0x address whose chain is not established; `unknown`: neither the source nor the format settles it.",
+          "optional": false,
+          "enum": [
+            "bitcoin",
+            "bitcoin_cash",
+            "bitcoin_sv",
+            "bitcoin_gold",
+            "litecoin",
+            "dogecoin",
+            "dash",
+            "zcash",
+            "monero",
+            "verge",
+            "ethereum",
+            "ethereum_classic",
+            "bsc",
+            "polygon",
+            "arbitrum",
+            "optimism",
+            "base",
+            "avalanche_c",
+            "evm",
+            "tron",
+            "solana",
+            "xrpl",
+            "ton",
+            "cardano",
+            "bnb_beacon",
+            "unknown"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "The address in its canonical form. Hex, bech32, CashAddr and TON raw values match whatever their letter case; Base58 is compared exactly.",
+          "optional": false,
+          "normalize": "crypto_address"
+        },
+        "memo": {
+          "type": "string",
+          "description": "A value given together with the address that selects the recipient behind it, such as an XRPL destination tag. Empty on most networks.",
+          "optional": true
+        },
+        "address_kind": {
+          "type": "enum",
+          "description": "What the address is: an externally owned account or a contract, a Bitcoin-family script type, a token account.",
+          "optional": true,
+          "enum": [
+            "eoa",
+            "contract",
+            "p2pkh",
+            "p2sh",
+            "p2wpkh",
+            "p2wsh",
+            "p2tr",
+            "multisig",
+            "token_account",
+            "unknown"
+          ]
+        },
+        "first_seen": {
+          "type": "datetime",
+          "description": "First on-chain activity.",
+          "optional": true
+        },
+        "last_seen": {
+          "type": "datetime",
+          "description": "Latest on-chain activity.",
+          "optional": true
+        },
+        "tx_count": {
+          "type": "integer",
+          "description": "Number of transactions involving the address.",
+          "optional": true,
+          "validator": {
+            "min": 0
+          }
+        },
+        "balance": {
+          "type": "string",
+          "description": "Balance as a decimal string in the network's native unit (BTC, ETH, TRX, \u2026).",
+          "optional": true,
+          "validator": {
+            "regex": "^\\d+(\\.\\d+)?$"
+          }
+        },
+        "balance_as_of": {
+          "type": "datetime",
+          "description": "When the balance was read.",
+          "optional": true
+        },
+        "balance_source": {
+          "type": "string",
+          "description": "Where the balance was read. Services count some outputs differently, so two sources can disagree.",
+          "optional": true
+        },
+        "activated_at": {
+          "type": "datetime",
+          "description": "When the address was activated or first funded (TRON activation, XRPL account creation, first incoming transfer).",
+          "optional": true
+        },
+        "first_funder": {
+          "type": "string",
+          "description": "The address that sent the first funds.",
+          "optional": true
+        },
+        "first_funding_tx": {
+          "type": "string",
+          "description": "Hash of the first funding transaction.",
+          "optional": true
+        },
+        "deployer": {
+          "type": "string",
+          "description": "For a contract, the address that deployed it.",
+          "optional": true
+        },
+        "deployment_tx": {
+          "type": "string",
+          "description": "For a contract, the hash of its deployment transaction.",
+          "optional": true
+        },
+        "public_label": {
+          "type": "string",
+          "description": "A public label or tag, e.g. an exchange's hot wallet.",
+          "optional": true
+        },
+        "label_source": {
+          "type": "string",
+          "description": "Who published the label.",
+          "optional": true
+        },
+        "frozen_by_issuer": {
+          "type": "string",
+          "description": "The stablecoin whose issuer has frozen this address, e.g. \"USDT (Tether)\".",
+          "optional": true
+        },
+        "sanctioned": {
+          "type": "boolean",
+          "description": "Listed on a sanctions list.",
+          "optional": true
+        },
+        "sanctions_programs": {
+          "type": "array",
+          "description": "Sanctions programmes the listing names, one entry each (e.g. CYBER2, DPRK3).",
+          "optional": true
+        },
+        "sanctions_as_of": {
+          "type": "date",
+          "description": "Date of the list the sanctions fields come from.",
+          "optional": true
+        },
+        "history_examined": {
+          "type": "integer",
+          "description": "Transactions read when the history was examined.",
+          "optional": true,
+          "validator": {
+            "min": 0
+          }
+        },
+        "history_complete": {
+          "type": "boolean",
+          "description": "Whether the whole history was read; false when a run stopped at its limit.",
+          "optional": true
+        }
+      }
+    }
+  ]
+}

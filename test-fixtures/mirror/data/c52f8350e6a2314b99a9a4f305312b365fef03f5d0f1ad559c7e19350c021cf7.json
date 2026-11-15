@@ -1,0 +1,15 @@
+{"format":1,"list":"OFAC SDN","as_of":"2026-11-13","type":"Individual","fields":["uid","name","aliases","programs","dates_of_birth","places_of_birth","nationalities","citizenships"],"entries":[
+[2676,"AL ZAWAHIRI, Dr. Ayman",[["AL-ZAWAHIRI, Ayman","strong"],["SALIM, Ahmad Fuad","strong"],["AL-ZAWAHIRI, Aiman Muhammad Rabi","strong"]],["SDGT"],["19 Jun 1951"],["Giza, Egypt"],[],[]],
+[12211,"KIM, Yong Chol",[["KIM, Yong-Chol","strong"],["KIM, Young-Chol","strong"],["KIM, Young-Cheol","strong"],["KIM, Young-Chul","strong"]],["DPRK"],["circa 1947","circa 1946"],["Pyongan-Pukto, North Korea"],[],[]],
+[17614,"KIM, Yong Chol",[],["DPRK2"],["18 Feb 1962"],[],["Korea, North"],[]],
+[20157,"KIM, Jong Un",[],["DPRK3"],["08 Jan 1984"],[],[],[]],
+[24918,"PARK, Jin Hyok",[["PAK, Jin Hek","strong"],["PAK, Jin Hyok","strong"],["PAK, Ch'in-hyo'k","strong"],["KIM, Hyon Woo","strong"],["KIM, Hyon Wu","strong"],["KIM, Hyon U","strong"],["DAVID, Andoson","strong"],["HENNY, Watson","strong"]],["DPRK3"],["15 Aug 1984","18 Oct 1984"],[],[],[]],
+[29585,"KARASAVIDI, Dmitrii",[["KARASAVIDI, Dmitriy","strong"]],["CYBER2"],["09 Jul 1985"],[],[],[]],
+[30520,"RAZA, Mujtaba Ali",[["RAZA, Mujtaba","strong"],["LILANI, Mujtaba Ali","strong"]],["CYBER2","ELECTION-EO13848"],["21 Oct 1987"],[],["Pakistan"],[]],
+[38419,"KHATIBI AGHADA, Ahmad",[["KHATIBI, Ahmad","strong"]],["CYBER2","IFSR","IRGC"],["21 Mar 1977"],["Ardakan, Yazd Province, Iran"],["Iran"],[]],
+[38420,"NIKAEEN RAVARI, Amir Hossein",[["NICKAEIN RAVARI, Amir Hossein","strong"],["NIKA'IN, Amir Hosein","strong"]],["CYBER2","IFSR","IRGC"],["13 Apr 1992"],["Meybod, Yazd Province, Iran"],["Iran"],[]],
+[42498,"SIM, Hyon Sop",[["SIM, Hyo'n-so'p","strong"]],["NPWMD"],["25 Nov 1983"],["Pyongyang, North Korea"],["Korea, North"],[]],
+[45404,"WANG, Mingming",[],["ILLICIT-DRUGS-EO14059"],["12 Mar 1989"],["Hebei, China"],["China"],["China"]],
+[58886,"BOYKOV, Ilya Aleksandrovich",[],["DPRK2"],["30 May 1994"],[],["Russia"],[]],
+[58889,"OBERTAS, Vitold Viktorovich",[],["DPRK2"],["18 Nov 1968"],["Vladivostok, Russia"],["Russia"],["Russia"]]
+]}

@@ -1,0 +1,44 @@
+name: validate
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The bundle is what runs; it has to be the build of src/ with the pinned esbuild.
+      - name: Bundle and manifest match the source
+        run: |
+          node build.mjs && node gen-manifest.mjs
+          git diff --exit-code dist/pack.mjs plugins/ || {
+            echo "::error::dist/pack.mjs or plugins/ is not the build of src/ — run 'node build.mjs && node gen-manifest.mjs' and commit the result"
+            exit 1
+          }
+
+      - name: Tests
+        run: node test-plugin.mjs
+
+      - name: Pack manifest
+        run: |
+          node - <<'JS'
+          const fs = require("node:fs");
+          const doc = JSON.parse(fs.readFileSync("plugins/sanctions.manifest.json", "utf8"));
+          const required = ["identifier", "content_type", "name", "version", "summary", "description", "platforms"];
+          const missing = required.filter((k) => !doc[k]);
+          if (missing.length) throw new Error(`pack manifest missing ${missing}`);
+          // registry schema limits: summary 250, description (the pack's page) 16,000; a member's
+          // name 128 and description 1024
+          if (doc.summary.length > 250) throw new Error("pack summary exceeds 250 chars");
+          if (doc.description.length > 16000) throw new Error("pack description exceeds 16000 chars");
+          for (const p of doc.plugins) {
+            if (!p.io || !p.scopes || !p.lifecycle) throw new Error(`${p.identifier}: needs io, scopes and lifecycle`);
+            if (p.name.length > 128 || p.description.length > 1024) throw new Error(`${p.identifier}: name or description too long`);
+          }
+          console.log(`manifest ok — ${doc.plugins.length} plugins`);
+          JS

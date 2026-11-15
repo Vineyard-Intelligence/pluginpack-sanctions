@@ -1,0 +1,13 @@
+{"format":1,"list":"OFAC SDN","as_of":"2026-11-13","type":"Entity","fields":["uid","name","aliases","programs","dates_of_birth","places_of_birth","nationalities","citizenships"],"entries":[
+[36,"AEROCARIBBEAN AIRLINES",[["AERO-CARIBBEAN","strong"]],["CUBA"],[],[],[],[]],
+[20129,"MINISTRY OF STATE SECURITY",[["STATE SECURITY DEPARTMENT","strong"]],["DPRK3"],[],[],[],[]],
+[22985,"CHEIL CREDIT BANK",[["FIRST CREDIT BANK","strong"],["KYONGYONG CREDIT BANK","weak"]],["DPRK4"],[],[],[],[]],
+[25437,"MINISTRY OF STATE SECURITY",[["MGB","weak"]],["CAATSA - RUSSIA"],[],[],[],[]],
+[27307,"LAZARUS GROUP",[["HIDDEN COBRA","weak"],["OFFICE 91","weak"],["GUARDIANS OF PEACE","weak"],["THE NEW ROMANTIC CYBER ARMY TEAM","weak"],["WHOIS HACKING TEAM","weak"],["RED DOT","weak"],["TEMP.HERMIT","weak"],["GROUP 77","weak"],["ZINC","weak"],["APT-C-26","weak"],["APPLEWORM","weak"]],["DPRK3"],[],[],[],[]],
+[30518,"SECONDEYE SOLUTION",[["FORWARDERZ","strong"]],["CYBER2","ELECTION-EO13848"],[],[],[],[]],
+[33151,"SUEX OTC, S.R.O.",[["SUCCESSFUL EXCHANGE","weak"]],["CYBER2"],[],[],[],[]],
+[36025,"GARANTEX EUROPE OU",[["GARANTEX","strong"]],["CYBER4","RUSSIA-EO14024"],[],[],[],[]],
+[37070,"BLENDER.IO",[["@MADEAMAZE_BOT","strong"],["BLENDERIO","strong"],["@BLENDERIO_RUSSIAN","strong"],["@BLENDERIO_ENGLISH","strong"]],["CYBER2"],[],[],[],[]],
+[45314,"VALERIAN LABS, INC.",[],["ILLICIT-DRUGS-EO14059"],[],[],[],[]],
+[58258,"CRYPTO HOME DMCC",[],["SDGT"],[],[],[],[]]
+]}
