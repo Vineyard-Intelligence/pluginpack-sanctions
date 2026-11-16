@@ -27,13 +27,21 @@
 // goes on that node. The original keeps its network, and its own sanctioned fields say whether the
 // string is listed at all.
 //
+// THE LEGACY TYPE IS READ, NOT DECLARED. Financial 3.0.0 removed `financial.crypto_address`, and the
+// registry's CI requires every type in `io` to be one a published Type Pack defines, so 1.0.0's
+// manifest, which consumed it, could not be listed beside Financial 3.0.0. The run panel therefore
+// no longer offers this plugin on a legacy node: Identify Crypto Network (Chain Explorer) links one to
+// a Cryptocurrency pack address, which is then screened. A legacy node handed to it all the same (a
+// project on Financial 2.0.0 or older keeps its nodes, and no update converts them) is screened as
+// before rather than skipped as another type.
+//
 // Nothing about the screened values leaves the device: the whole address shard is downloaded and
 // matched here (mirror.ts).
 import { definePlugin } from './sdk';
 import type { GraphNode, HostContext, RunResult } from './sdk';
 import { AddressIndex, EVM_NETWORKS, legacyNetwork, onNetwork, programsOf } from './address-match';
 import type { AddressRecord, AddressShard } from './address-match';
-import { AUTHOR, GRAPH_SCOPES, LICENSE, LIFECYCLE, NETWORK, PLATFORMS, crypto, financial, identity, plural, short } from './common';
+import { AUTHOR, GRAPH_SCOPES, LICENSE, LIFECYCLE, NETWORK, PLATFORMS, crypto, identity, plural, short } from './common';
 import { LIST, Mirror, provenance, staleness } from './mirror';
 import { Parties, delta } from './parties';
 import { Links, keptLine } from './links';
@@ -60,13 +68,13 @@ export const addressScreening = definePlugin({
         name: 'OFAC Address Screening',
         version: '1.0.0',
         description:
-            "Checks each selected Crypto Address against the digital currency addresses on OFAC's SDN list, on the address's own network, and writes sanctioned (true or false), sanctions_list, sanctions_programs and sanctions_as_of (the list's publish date); an address already marked sanctioned by another source is left as it is. A listed address is linked from the listed person or organization by \"listed address\" with the SDN uid and programmes. An address on network evm or unknown, or a legacy Financial address, gets one node per network the list names it on, linked by \"same address on\" or \"same as\"; a legacy address whose currency names one chain (btc, ltc, xmr, trx, sol) is screened on that chain only. The list is downloaded whole and matched on this device; no address is sent.",
+            "Checks each selected Crypto Address against the digital currency addresses on OFAC's SDN list, on the address's own network, and writes sanctioned (true or false), sanctions_list, sanctions_programs and sanctions_as_of (the list's publish date); an address already marked sanctioned by another source is left as it is. A listed address is linked from the listed person or organization by \"listed address\" with the SDN uid and programmes. An address on network evm or unknown gets one node per network the list names it on, linked by \"same address on\". The list is downloaded whole and matched on this device; no address is sent.",
         icon: 'wallet',
         author: AUTHOR,
         license: LICENSE,
         platforms: PLATFORMS,
         io: {
-            consumes: [crypto('crypto_address'), financial('crypto_address')],
+            consumes: [crypto('crypto_address')],
             produces: [crypto('crypto_address'), identity('person'), identity('organization')],
         },
         scopes: { graph: GRAPH_SCOPES, network: NETWORK },

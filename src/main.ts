@@ -43,7 +43,7 @@ const pack: VineyardPluginPack & {
     identifier: 'run.vineyard.pluginpacks.sanctions',
     content_type: 'vineyard:pluginpack',
     name: 'Sanctions Screening',
-    version: '1.0.0',
+    version: '1.1.0',
     summary:
         "Screens crypto addresses, people and organizations against OFAC's SDN list: exact address matches on each address's own network, and scored possible matches for names. The list is downloaded whole and matched on this device.",
     description: PAGE,

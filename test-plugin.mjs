@@ -13,9 +13,11 @@
  *     --checked-at 2026-11-14T23:47:00Z --last-modified 2026-11-13T16:32:59Z --digest-verified \
  *     --out test-fixtures/mirror
  *
- * test-fixtures/types holds the three type definitions the pack reads and writes. When the type
- * packs are checked out beside this repository (../typepack-cryptocurrency, ../typepack-basic) the
- * fixtures are compared with them, so they cannot drift from what they stand in for.
+ * test-fixtures/types holds the type definitions the pack reads and writes. When the type packs are
+ * checked out beside this repository (../typepack-cryptocurrency, ../typepack-basic) the fixtures are
+ * compared with them, so they cannot drift from what they stand in for. financial-2.0.0.json is the
+ * legacy crypto_address as Financial 2.0.0 published it, the last release with it (3.0.0 removed it),
+ * which projects made before 3.0.0 still hold nodes of; it is compared with that release's commit.
  *
  * The host contract this stands in for, and which the assertions below check:
  *   · run() is called ONCE with the whole selection; the plugin walks it.
@@ -31,7 +33,8 @@
  *   · a thrown error is the only failure the host sees, and it discards what the run staged.
  */
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const bundle = await import('./dist/pack.mjs');
@@ -52,7 +55,7 @@ Date.now = () => NOW;
 
 const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const TYPES = {};
-for (const pack of ['cryptocurrency', 'identity', 'financial']) {
+for (const pack of ['cryptocurrency', 'identity', 'financial-2.0.0']) {
     const doc = readJson(`test-fixtures/types/${pack}.json`);
     for (const t of doc.types) TYPES[`${t.category}.${t.name}`] = t;
 }
@@ -279,26 +282,56 @@ await step('the manifest is the bundle: two members, GET to the mirror only, the
         assert.equal(m.version, '1.0.0');
     }
     const [a, n] = manifest.plugins;
+    // Not the legacy financial.crypto_address: Financial 3.0.0 removed it, and the registry refuses a
+    // manifest naming a type no published Type Pack defines (the next step). Handed one, the plugin
+    // still screens it (section 2).
     assert.deepEqual(a.io.consumes.map((t) => `${t.typepack}/${t.category}.${t.name}`), [
         'run.vineyard.typepacks.cryptocurrency/cryptocurrency.crypto_address',
-        'run.vineyard.typepacks.financial/financial.crypto_address',
     ]);
     assert.deepEqual(a.io.produces.map((t) => `${t.category}.${t.name}`), ['cryptocurrency.crypto_address', 'identity.person', 'identity.organization']);
     assert.deepEqual(n.io.consumes.map((t) => `${t.category}.${t.name}`), ['identity.person', 'identity.organization']);
     assert.deepEqual(Object.keys(n.params.properties), ['min_score', 'max_candidates', 'include_weak_aliases']);
 });
 
-await step('the type fixtures equal the type packs beside this repository', async () => {
-    const real = { cryptocurrency: '../typepack-cryptocurrency/typepacks/cryptocurrency.json', identity: '../typepack-basic/typepacks/identity.json', financial: '../typepack-basic/typepacks/financial.json' };
+await step('every type the manifest names is one the type packs beside this repository define', async () => {
+    // What the registry's check_typerefs.py holds every listed pack to, against the packs it lists: a
+    // consumed type nothing defines matches no node, and the plugin silently drops out of the run panel.
+    // 1.0.0 consumed financial.crypto_address, which Financial 3.0.0 removed.
+    const dirs = ['../typepack-cryptocurrency/typepacks', '../typepack-basic/typepacks'];
+    if (!dirs.every((d) => existsSync(d))) {
+        console.log('      (skipped: ../typepack-cryptocurrency and ../typepack-basic are not both checked out beside this one)');
+        return;
+    }
+    const defined = new Map();
+    for (const d of dirs)
+        for (const f of readdirSync(d).filter((x) => x.endsWith('.json'))) {
+            const doc = readJson(join(d, f));
+            for (const t of doc.types ?? []) defined.set(`${t.category}.${t.name}`, doc.identifier);
+        }
+    const refs = manifest.plugins.flatMap((m) => [...m.io.consumes, ...m.io.produces].map((t) => [m.identifier, t]));
+    const missing = refs.filter(([, t]) => defined.get(`${t.category}.${t.name}`) !== t.typepack).map(([id, t]) => `${id}: ${t.typepack}/${t.category}.${t.name}`);
+    assert.deepEqual(missing, [], 'types no type pack beside this one defines');
+    console.log(`      (${refs.length} type references, all defined)`);
+});
+
+await step('the type fixtures equal the type packs they stand in for', async () => {
+    const real = { cryptocurrency: '../typepack-cryptocurrency/typepacks/cryptocurrency.json', identity: '../typepack-basic/typepacks/identity.json' };
     let compared = 0;
-    for (const [name, path] of Object.entries(real)) {
-        if (!existsSync(path)) continue;
-        const doc = readJson(path);
-        const fx = readJson(`test-fixtures/types/${name}.json`);
+    const same = (name, doc, fx) => {
         assert.equal(doc.version, fx.version, `${name} is ${doc.version} beside, fixture ${fx.version}`);
         for (const t of fx.types) assert.deepEqual(doc.types.find((x) => x.name === t.name), t, `${name}.${t.name}`);
         compared++;
+    };
+    for (const [name, path] of Object.entries(real)) if (existsSync(path)) same(name, readJson(path), readJson(`test-fixtures/types/${name}.json`));
+    // Financial 2.0.0 as the registry pinned it. Its crypto_address is what a project made before 3.0.0
+    // holds, and no later release has it to compare with.
+    let financial2 = null;
+    try {
+        financial2 = JSON.parse(execFileSync('git', ['-C', '../typepack-basic', 'show', 'ce1779f271b838890d7539695279310dc732fcef:typepacks/financial.json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+    } catch {
+        // No checkout beside this one, or one without that commit.
     }
+    if (financial2) same('financial 2.0.0', financial2, readJson('test-fixtures/types/financial-2.0.0.json'));
     console.log(`      (${compared} of 3 compared with a checkout beside this one)`);
 });
 
@@ -449,6 +482,19 @@ await step('a legacy Financial address whose currency names one chain is matched
     const eth = h3.add('financial.crypto_address', { address: '0x4f47bc496083c727c5fbe3ce9cdf2b0f6496270c', currency: 'eth' });
     const r3 = await run(ADDRESS, h3, [eth]);
     assert.equal(r3.counts.networks_settled, 3);
+});
+
+await step('a project on Financial 3.0.0 keeps its legacy nodes: handed one, the plugin still screens it', async () => {
+    // 3.0.0 removed the type, so nothing defines it any more and the run panel does not offer the
+    // plugin on it; the node is still in the project, and the agent can hand it over.
+    const h = makeHost({ installed: ['cryptocurrency.crypto_address', 'identity.person', 'identity.organization'] });
+    const old = h.add('financial.crypto_address', { address: 'TUCsTq7TofTCJRRoHk6RvhMoS2mJLm5Yzq', currency: 'trx' });
+    const r = await run(ADDRESS, h, [old]);
+    assert.equal(r.counts.skipped, 0, 'not skipped as a node of another type');
+    assert.equal(h.node(old).data.sanctioned, true);
+    const [same] = h.edgesFrom(old);
+    assert.deepEqual([same.label, h.node(same.to_node_id).type, h.node(same.to_node_id).data.network], ['same as', 'cryptocurrency.crypto_address', 'tron']);
+    assert.ok(!h.log.some((w) => w.op === 'create' && w.type === 'financial.crypto_address'), 'no node of the removed type is created');
 });
 
 await step('one address, two entries: two parties, two links', async () => {

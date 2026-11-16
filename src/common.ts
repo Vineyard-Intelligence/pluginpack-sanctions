@@ -4,10 +4,8 @@ import { MIRROR } from './mirror';
 
 export const CRYPTO_PACK = 'run.vineyard.typepacks.cryptocurrency';
 export const IDENTITY_PACK = 'run.vineyard.typepacks.identity';
-export const FINANCIAL_PACK = 'run.vineyard.typepacks.financial';
 export const crypto = (name: string): TypeRef => ({ typepack: CRYPTO_PACK, category: 'cryptocurrency', name });
 export const identity = (name: string): TypeRef => ({ typepack: IDENTITY_PACK, category: 'identity', name });
-export const financial = (name: string): TypeRef => ({ typepack: FINANCIAL_PACK, category: 'financial', name });
 
 // PLATFORM: web and desktop. raw.githubusercontent.com answers with `Access-Control-Allow-Origin: *`,
 // which is why the list is mirrored there at all (mirror.ts).

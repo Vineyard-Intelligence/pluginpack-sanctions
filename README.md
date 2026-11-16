@@ -19,7 +19,10 @@ of the next. A shard that does not match its index fails the run before anything
 
 ### OFAC Address Screening (`run.vineyard.plugins.sanctions_address_screening`)
 
-Takes `cryptocurrency.crypto_address` nodes, and the Financial pack's legacy `financial.crypto_address`.
+Takes `cryptocurrency.crypto_address` nodes. A node of the Financial pack's legacy
+`financial.crypto_address`, which Financial 3.0.0 removed, is no longer a declared input, so the run
+panel does not offer the plugin on one: Chain Explorer's Identify Crypto Network links it to a
+Cryptocurrency pack address first. Handed one all the same, the plugin screens it as below.
 
 On every screened address it writes the Cryptocurrency type pack's fields:
 
@@ -157,7 +160,9 @@ npx -p typescript@5.9.3 tsc --noEmit -p tsconfig.json
 way the app does, and a mirror served from disk. `test-fixtures/mirror` is what sanctions-mirror's
 build makes of its `test/fixture-sdn.xml`, 26 real entries from the 2026-11-13 list; the command is
 at the top of `test-plugin.mjs`. `test-fixtures/types` holds the three type definitions, compared
-with the type packs when they are checked out beside this repository.
+with the type packs when they are checked out beside this repository; the legacy address is compared
+with Financial 2.0.0, the last release that defined it. The manifest's types are checked against
+the type packs beside this repository too, as the registry checks them.
 
 `src/sdk.ts` and `src/crypto-address.ts` are copies: the first of the plugin SDK, the second of the
 address code every pack that writes crypto addresses carries (and sanctions-mirror too, so both

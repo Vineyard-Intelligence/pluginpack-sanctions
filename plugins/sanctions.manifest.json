@@ -2,7 +2,7 @@
   "identifier": "run.vineyard.pluginpacks.sanctions",
   "content_type": "vineyard:pluginpack",
   "name": "Sanctions Screening",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "Screens crypto addresses, people and organizations against OFAC's SDN list: exact address matches on each address's own network, and scored possible matches for names. The list is downloaded whole and matched on this device.",
   "description": "For the sanctions question in a crypto or financial case: is this address, person or company on OFAC's SDN list? Addresses match exactly, on their own network, and are linked to the party the list names. Names match by similarity, as scored candidates to confirm or dismiss.\n\n**Needs:** nothing. No account and no key.\n\n**Who sees it:** GitHub, which serves the list. A run downloads the whole list and matches on this device, so nothing you screen is sent anywhere. OFAC is not contacted.\n\n**Read results with care:**\n\n- The same string on another network is another account: the run names it and does not count it as a hit. A value OFAC lists for USDT or USDC without a chain matches on every EVM network.\n- `sanctioned: false` means not on the SDN list as of `sanctions_as_of`. It says nothing about other lists (UN, EU, UK, Korea) or about who controls the address. An address already marked sanctioned keeps that mark.\n- A possible match is a similar name, not the same party: compare date of birth and nationality before treating it as yours.\n- The mirror checks OFAC every six hours; a run warns when it has not for three days. Confirm a hit on OFAC's Sanctions List Search (https://sanctionssearch.ofac.treas.gov/) before acting on it.\n\n**Data and licences:** OFAC's SDN list, a U.S. Government work, as rebuilt and checked by sanctions-mirror (https://github.com/Vineyard-Intelligence/sanctions-mirror).\n\n**Source:** https://github.com/Vineyard-Intelligence/pluginpack-sanctions (Apache-2.0)",
   "author": {
@@ -28,7 +28,7 @@
       "content_type": "vineyard:plugin",
       "name": "OFAC Address Screening",
       "version": "1.0.0",
-      "description": "Checks each selected Crypto Address against the digital currency addresses on OFAC's SDN list, on the address's own network, and writes sanctioned (true or false), sanctions_list, sanctions_programs and sanctions_as_of (the list's publish date); an address already marked sanctioned by another source is left as it is. A listed address is linked from the listed person or organization by \"listed address\" with the SDN uid and programmes. An address on network evm or unknown, or a legacy Financial address, gets one node per network the list names it on, linked by \"same address on\" or \"same as\"; a legacy address whose currency names one chain (btc, ltc, xmr, trx, sol) is screened on that chain only. The list is downloaded whole and matched on this device; no address is sent.",
+      "description": "Checks each selected Crypto Address against the digital currency addresses on OFAC's SDN list, on the address's own network, and writes sanctioned (true or false), sanctions_list, sanctions_programs and sanctions_as_of (the list's publish date); an address already marked sanctioned by another source is left as it is. A listed address is linked from the listed person or organization by \"listed address\" with the SDN uid and programmes. An address on network evm or unknown gets one node per network the list names it on, linked by \"same address on\". The list is downloaded whole and matched on this device; no address is sent.",
       "icon": "wallet",
       "platforms": {
         "primary": "web",
@@ -46,11 +46,6 @@
           {
             "typepack": "run.vineyard.typepacks.cryptocurrency",
             "category": "cryptocurrency",
-            "name": "crypto_address"
-          },
-          {
-            "typepack": "run.vineyard.typepacks.financial",
-            "category": "financial",
             "name": "crypto_address"
           }
         ],
